@@ -20,4 +20,6 @@ module.exports = (app) => {
     app.post('/update', user.update)
 
     app.post('/meeting/list', meeting.getMeeting)
+
+    app.post('/meeting/initialize', meeting.findByHash)
 }

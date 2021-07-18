@@ -3,6 +3,7 @@ const db = require('../../models/index')
 const Meeting = db.meeting
 const Invited = db.invited
 const User = db.user
+const sentInvite = require('../../service/mailer/invite')
 
 
 exports.create = (async (req, res) => {
@@ -32,8 +33,9 @@ exports.create = (async (req, res) => {
             await Invited.create({
                 meeting_id: parseInt(meeting.id),
                 email: element
-                
             })
+            sentInvite(element, roomName, scheduleDate, hashName)
+
         })      
 
 
@@ -61,4 +63,19 @@ exports.getMeeting = (async (req, res) => {
     })
 
     res.send(meeting)
+})
+
+
+exports.findByHash = (async (req, res) => {
+    const hash = req.body.hash 
+
+    const data = await Meeting.findAll({
+        where: {
+            hash_name: hash 
+        }
+    })
+    data[0].isUsed = true 
+    data[0].save()
+
+    res.send(data)
 })
